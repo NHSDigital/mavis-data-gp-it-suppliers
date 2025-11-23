@@ -20,7 +20,7 @@ This will install the dependencies specified in the `pyproject.toml` file.
 ## Running
 
 ```bash
-uv run bin/download_gpad.py --month 2025-01
+uv run bin/download_gpad.py --month 2025-09
 ```
 
 The code does the following:
@@ -31,3 +31,9 @@ The code does the following:
 - Writes the mapping to a CSV file
 
 The output file will be written to `data/gp_suppliers.csv` and is checked into the repository so updates to the data are visible over time.
+
+The script can also be given a link direct to the zip file to download. When given, the script will skip looking for the download link on the NHS Digital website and use the provided link instead:
+
+```bash
+uv run bin/download_gpad.py --month 2025-09 --zip-file https://files.digital.nhs.uk/8F/14C367/Practice_Level_Crosstab_Sep_25.zip
+```

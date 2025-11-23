@@ -31,9 +31,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def main(month: str):
+def main(month: str, zip_file: str = None):
     try:
-        download_gpad_zip_file(month)
+        download_gpad_zip_file(month, zip_file)
     except Exception as e:
         logger.error(f"Error downloading zip file: {e}")
         return
@@ -67,7 +67,7 @@ def main(month: str):
     logger.info(f"Completed processing data for {month}")
 
 
-def download_gpad_zip_file(iso_month: str):
+def download_gpad_zip_file(iso_month: str, zip_file_path: str = None):
     """
     Download the GPAD suppliers zip data for a given month
     from the NHS Digital website
@@ -75,14 +75,20 @@ def download_gpad_zip_file(iso_month: str):
     month, year = get_month_and_year_from_iso_month(iso_month)
     url = f"{BASE_URL}/{month}-{year}"
 
-    logger.info(f"Finding download link for {iso_month} from {url}")
-    response = requests.get(url)
-    response.raise_for_status()
+    if zip_file_path is None:
+        logger.info(f"Finding download link for {iso_month} from {url}")
+        response = requests.get(url)
+        response.raise_for_status()
 
-    try:
-        download_link = get_download_link_from_response(response)
-    except Exception as e:
-        raise Exception(f"Error getting download link: {e}")
+        try:
+            download_link = get_download_link_from_response(response)
+        except Exception as e:
+            raise Exception(f"Error getting download link: {e}")
+    else:
+        logger.info(
+            f"Skipping finding download link and using provided zip file path: {zip_file_path}"
+        )
+        download_link = zip_file_path
 
     logger.info(f"Downloading zip file from {download_link}")
     response = requests.get(download_link)
@@ -190,10 +196,18 @@ if __name__ == "__main__":
         help="The month to download the data for (e.g. 2025-01)",
     )
 
+    parser.add_argument(
+        "--zip-file",
+        type=str,
+        help="The path to the zip file to download",
+        default=None,
+        required=False,
+    )
+
     args = parser.parse_args()
 
     # If no month is provided, use the previous month
     if args.month is None:
         args.month = (datetime.now() - relativedelta(months=1)).strftime("%Y-%m")
 
-    main(args.month)
+    main(args.month, args.zip_file)
