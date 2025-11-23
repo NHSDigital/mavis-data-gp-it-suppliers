@@ -166,7 +166,7 @@ def write_output_file(data: dict, gp_code_to_name: dict):
     """
     with open(OUTPUT_FILE, "w") as file:
         writer = csv.writer(file)
-        writer.writerow(["GP Code", "GP Name", "Appointment Systems", "Main System"])
+        writer.writerow(["GP_ODS_CODE", "GP_NAME", "GP_GPAD_SYSTEMS", "GP_SYSTEM"])
         for gp_code, (appointment_systems, main_system) in data.items():
             writer.writerow(
                 [gp_code, gp_code_to_name[gp_code], appointment_systems, main_system]
