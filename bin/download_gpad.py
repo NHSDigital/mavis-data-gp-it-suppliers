@@ -156,6 +156,10 @@ def process_data_files(input_file_paths: list[str]):
                 if gp_code not in gp_code_to_name:
                     gp_code_to_name[gp_code] = gp_name
 
+    # Sort the data alphabetically by GP code
+    # to ensure the output file can be compared more easily over time
+    data = dict(sorted(data.items()))
+
     return data, gp_code_to_name
 
 
